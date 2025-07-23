@@ -19,6 +19,11 @@ class AuthService extends ChangeNotifier {
 
   // Getter to access the currently authenticated user
   User? get currentUser => _auth.currentUser;
+  int selectedIndex = 0;
+  void updatedSelectedIndex(int index) {
+    selectedIndex = index;
+    notifyListeners();
+  }
 
   // Method to log in a user with email and password
   Future<User?> login(String email, String password) async {
@@ -72,6 +77,11 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  Future<void> resetPassword(String email) async {
+    if (email.isEmpty) throw 'Email is required for password reset';
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
   // Method to handle authentication errors
   String _authError(String description) {
     switch (description) {
@@ -96,8 +106,7 @@ class AuthService extends ChangeNotifier {
   }
 
   // Note Collection Reference
-  CollectionReference get _notesCollection =>
-      _firestore.collection('notes');
+  CollectionReference get _notesCollection => _firestore.collection('notes');
 
   // Add a new Note
   Future<void> addNote(String name, String description) async {

@@ -1,5 +1,5 @@
 //
-// Programmer               : Rethabile Eric Siase
+// Coder               : Rethabile Eric Siase
 // Time taken to complete   : 2 days
 // Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes  
 //

@@ -12,9 +12,6 @@ import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
@@ -26,8 +23,6 @@ void main() async {
         messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
         projectId: dotenv.env['PROJECT_ID']!,
         storageBucket: dotenv.env['STORAGE_BUCKET'],
-        // measurementId: dotenv.env['MEASUREMENT_ID'],
-        // authDomain: dotenv.env['Auth_DOMAIN'],
       ),
     );
   } else {

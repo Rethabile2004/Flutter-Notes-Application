@@ -163,6 +163,59 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
+  void _showForgotPasswordDialog(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Reset Password"),
+            content: TextFormField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: "Enter your email"),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final email = emailController.text.trim();
+                  if (email.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please enter your email")),
+                    );
+                    return;
+                  }
+
+                  try {
+                    final authService = Provider.of<AuthService>(
+                      context,
+                      listen: false,
+                    );
+                    await authService.resetPassword(email);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Password reset link sent to your email"),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text("Error: $e")));
+                  }
+                },
+                child: const Text("Send Reset Link"),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,55 +240,100 @@ class _AuthPageState extends State<AuthPage> {
                   height: 200,
                   child: Image.asset('assets/passwd.png'),
                 ),
-              SizedBox(height: 120),
-              if (!widget.isLogin)
-                // Title for registration
-                const Text(
-                  'Create an Account',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              if (widget.isLogin)
-                // Title for login
-                const Text(
-                  'Login to Your Account',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              // Email input field
-              EmailFormField(controller: _emailController),
-              const SizedBox(height: 16),
-              // Password input field
-              PasswordFormField(controller: _passwordController),
-              const SizedBox(height: 24),
-              // Submit button
-              ElevatedButton(
-                // onPressed: _isLoading ? null : () => _submit(context),
-                onPressed: () {
-                  if (!_mainFormKey.currentState!.validate()) {
-                    return;
-                  } else if (!widget.isLogin) {
-                    _showPersonalDetailsDialog(context);
-                  } else {
-                    _submit(context);
-                  }
-                },
-                child:
-                    _isLoading
-                        ? const CircularProgressIndicator()
-                        : Text(widget.isLogin ? 'Login' : 'Register'),
-              ),
-              // Toggle between login and registration
-              TextButton(
-                onPressed:
-                    () => Navigator.pushReplacementNamed(
-                      context,
-                      widget.isLogin
-                          ? RouteManager.registrationPage
-                          : RouteManager.loginPage,
-                    ),
-                child: Text(
-                  widget.isLogin
-                      ? 'Create an account'
-                      : 'Already have an account?',
+              SizedBox(height: 10),
+              Card(
+                elevation: 8,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      if (!widget.isLogin)
+                        // Title for registration
+                        const Text(
+                          'Create an Account',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      if (widget.isLogin)
+                        // Title for login
+                        const Text(
+                          'Login to Your Account',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      SizedBox(height: 10),
+                      // Email input field
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: EmailFormField(controller: _emailController),
+                      ),
+                      const SizedBox(height: 5),
+                      // Password input field
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: PasswordFormField(
+                          controller: _passwordController,
+                        ),
+                      ),
+                      if (widget.isLogin)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            child: const Text('Forgot Password'),
+                            onPressed: () {
+                              _showForgotPasswordDialog(context);
+                            },
+                          ),
+                        ),
+                      // Submit button
+                      SizedBox(
+                        width: 420,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          // onPressed: _isLoading ? null : () => _submit(context),
+                          onPressed: () {
+                            if (!_mainFormKey.currentState!.validate()) {
+                              return;
+                            } else if (!widget.isLogin) {
+                              _showPersonalDetailsDialog(context);
+                            } else {
+                              _submit(context);
+                            }
+                          },
+                          child:
+                              _isLoading
+                                  ? const CircularProgressIndicator()
+                                  : Text(widget.isLogin ? 'Login' : 'Register'),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      // Toggle between login and registration
+                      TextButton(
+                        onPressed:
+                            () => Navigator.pushReplacementNamed(
+                              context,
+                              widget.isLogin
+                                  ? RouteManager.registrationPage
+                                  : RouteManager.loginPage,
+                            ),
+                        child: Text(
+                          widget.isLogin
+                              ? 'Create an account'
+                              : 'Already have an account?',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

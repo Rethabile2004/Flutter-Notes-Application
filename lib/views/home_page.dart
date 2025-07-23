@@ -1,7 +1,7 @@
 //
-// Descriptionr                    : Rethabile Eric Siase
+// Coder                    : Rethabile Eric Siase
 // Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes  
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
 //
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,8 +13,6 @@ import 'package:firebase_flutter/views/notes_screen.dart';
 import 'package:firebase_flutter/views/user_infromation_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-
 
 /// Redesigned Home Screen showing user info and list of notes.
 /// Allows the user to add, edit, or delete notes with a refreshed UI layout.
@@ -111,11 +109,11 @@ class MainPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.home,color:Colors.white),
+        leading: Icon(Icons.home, color: Colors.white),
         title: const Text('Dashboard'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout,color:Colors.white),
+            icon: const Icon(Icons.logout, color: Colors.white),
             tooltip: 'Logout',
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
@@ -130,7 +128,6 @@ class MainPage extends StatelessWidget {
         label: const Text('Add Note'),
         icon: const Icon(Icons.add),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<AppUser?>(
@@ -149,7 +146,7 @@ class MainPage extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 👤 User Info Card
+                //  User Info Card
                 Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -165,7 +162,7 @@ class MainPage extends StatelessWidget {
                       radius: 25,
                       child: Icon(Icons.person),
                     ),
-                    trailing: Icon(Icons.edit,color:Colors.blue[900]),
+                    trailing: Icon(Icons.edit, color: Colors.blue[900]),
                     title: Text(
                       user.name,
                       style: const TextStyle(
@@ -309,10 +306,10 @@ class MainPage extends StatelessWidget {
             ),
             actions: [
               TextButton(
-                onPressed: ()=>Navigator.pop(context),
-                child:const Text('Close')
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
               ),
-                         ],
+            ],
           ),
     );
   }
@@ -339,10 +336,7 @@ class MainPage extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await Provider.of<AuthService>(
-        context,
-        listen: false,
-      ).deleteNote(noteId);
+      await Provider.of<AuthService>(context, listen: false).deleteNote(noteId);
     }
   }
 }
