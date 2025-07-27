@@ -1,6 +1,6 @@
 # firebase_flutter
 
-A new Flutter project.
+A new Flutter project. Powered by firebase for seamless storage. Authenticated users can add notes, remove them and update them. 
 
 ## Getting Started
 
