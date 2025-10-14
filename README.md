@@ -1,6 +1,7 @@
 # Notes Application
 
-##Screenshots<img src="https://github.com/user-attachments/assets/c27e5bd4-a53b-4411-a030-7db1cc848218" alt="Screenshot 1" width="300" height="auto">
+##Screenshots
+<img src="https://github.com/user-attachments/assets/c27e5bd4-a53b-4411-a030-7db1cc848218" alt="Screenshot 1" width="300" height="auto">
 <img src="https://github.com/user-attachments/assets/3bafe6d4-70c3-42d9-ac57-00216387a54c" alt="Screenshot 2" width="300" height="auto">
 <img src="https://github.com/user-attachments/assets/cb7be5fb-4f59-4db4-a59c-4effc8596b52" alt="Screenshot 3" width="300" height="auto">
 <img src="https://github.com/user-attachments/assets/4f765219-18c9-4490-a85c-a474f511d0e9" alt="Screenshot 4" width="300" height="auto">
