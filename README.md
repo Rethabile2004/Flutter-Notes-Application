@@ -6,7 +6,7 @@ This project is a Notes Application that allows users to create, edit, and delet
 
 ---
 
-## ✨ **Features**
+## **Features**
 
 - **User Authentication**: Sign up, log in, and log out securely using Firebase Authentication (email/password).
 - **Real-Time Note Storage**: Store and sync notes in real-time using Firebase Firestore.
@@ -16,7 +16,7 @@ This project is a Notes Application that allows users to create, edit, and delet
 
 ---
 
-## 🛠 **Technologies Used**
+## **Technologies Used**
 
 - **Flutter**: For building the cross-platform UI.
 - **Firebase Authentication**: For secure user authentication.
@@ -25,7 +25,7 @@ This project is a Notes Application that allows users to create, edit, and delet
 
 ---
 
-## 📋 **Prerequisites**
+## **Prerequisites**
 
 Before running the project, ensure you have the following installed:
 
@@ -37,7 +37,7 @@ Before running the project, ensure you have the following installed:
 
 ---
 
-## 🚀 **Getting Started**
+## **Getting Started**
 
 Follow these steps to set up and run the project locally.
 
@@ -45,3 +45,9 @@ Follow these steps to set up and run the project locally.
 ```bash
 git clone https://github.com/your-username/notes-app.git
 cd notes-app
+
+### 2. Install Dependencies
+Run the following command to install all required Flutter packages:
+```bash
+flutter pub get
+```
