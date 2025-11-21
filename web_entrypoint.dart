@@ -2,7 +2,7 @@
 // Coder                    : Rethabile Eric Siase
 // Time taken to complete   : 2 days
 // Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
-///
+//
 
 import 'package:firebase_flutter/routes/app_router.dart';
 import 'package:firebase_flutter/services/auth_service.dart';

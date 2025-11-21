@@ -1,43 +1,60 @@
-//
-// Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules  
-//
-
+// password_formfield.dart
 import 'package:flutter/material.dart';
 
-class PasswordFormField extends StatelessWidget {
+class PasswordFormField extends StatefulWidget {
   final TextEditingController controller;
-  const PasswordFormField({super.key, required this.controller});
+  final String hintText;
+  final IconData prefixIcon;
+
+  const PasswordFormField({
+    super.key,
+    required this.controller,
+    this.hintText = "Password",
+    this.prefixIcon = Icons.lock_outline,
+  });
+
+  @override
+  State<PasswordFormField> createState() => _PasswordFormFieldState();
+}
+
+class _PasswordFormFieldState extends State<PasswordFormField> {
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      obscureText: true,
-      //password visibility icon, when pressed the password shows else the password is hidden
-      keyboardType: TextInputType.visiblePassword,
-      
-      decoration: const InputDecoration(
-        labelText: 'Password',
-        prefixIcon: Icon(Icons.lock),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      controller: widget.controller,
+      obscureText: _obscureText,
+      style: const TextStyle(color: Colors.white, fontSize: 16),
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        hintStyle: const TextStyle(color: Colors.white70),
+        prefixIcon: Icon(widget.prefixIcon, color: Colors.white70),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.white70,
+          ),
+          onPressed: () => setState(() => _obscureText = !_obscureText),
         ),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.15),
+        border: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.white, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) return 'Password is required';
-        if (value.length < 8) return 'Minimum 8 characters';
-        if (!value.contains('@')) return 'Must contain @ symbol';
+        if (value.length < 8) return 'Password must be at least 8 characters';
         return null;
       },
     );
   }
 }
-// // This widget is a custom password input field for a form. It uses a TextFormField to accept user input and validate the password.
-// // The validator checks if the password is empty, if it is at least 8 characters long, and if it contains an '@' symbol.
-// // The field also includes an icon for better user experience.
-// // The widget is reusable and can be easily integrated into any form that requires password input.
-// // It enhances the user interface by providing clear feedback on the validity of the input, ensuring that only strong passwords are accepted.
-// // This widget is a custom password input field for a form. It uses a TextFormField to accept user input and validate the password.
-// // The validator checks if the password is empty, if it is at least 8 characters long, and if it contains an '@' symbol.

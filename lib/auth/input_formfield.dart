@@ -1,16 +1,16 @@
 // email_formfield.dart
 import 'package:flutter/material.dart';
 
-class EmailFormField extends StatelessWidget {
+class InputFormfield extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final IconData prefixIcon;
 
-  const EmailFormField({
+  const InputFormfield({
     super.key,
     required this.controller,
-    this.hintText = "Email",
-    this.prefixIcon = Icons.mail_outline,
+    required this.hintText,
+    required this.prefixIcon,
   });
 
   @override
@@ -36,13 +36,6 @@ class EmailFormField extends StatelessWidget {
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Email is required';
-        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-          return 'Enter a valid email';
-        }
-        return null;
-      },
     );
   }
 }

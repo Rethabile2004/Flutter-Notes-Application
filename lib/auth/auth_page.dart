@@ -1,19 +1,15 @@
-//
-// Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
-//
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_flutter/auth/input_formfield.dart';
 import 'package:firebase_flutter/routes/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'email_formfield.dart';
 import 'password_formfield.dart';
 
-// AuthPage widget handles both login and registration
 class AuthPage extends StatefulWidget {
-  final bool isLogin; // Determines if the page is for login or registration
+  final bool isLogin;
   const AuthPage({super.key, required this.isLogin});
 
   @override
@@ -21,105 +17,299 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final _emailController =
-      TextEditingController(); // Controller for email input
-  final _passwordController =
-      TextEditingController(); // Controller for password input
-  final TextEditingController _surnameController =
-      TextEditingController(); // Controller for surname input (registration only)
-  final TextEditingController _studentNumberController =
-      TextEditingController(); // Controller for student number input (registration only)
-  final TextEditingController _phoneNumberController =
-      TextEditingController(); // Controller for phone number input (registration only)
-  final _nameController =
-      TextEditingController(); // Controller for name input (registration only)
-  bool _isLoading = false; // Loading state
-  final _mainFormKey = GlobalKey<FormState>(); // For email & password
-  final _detailsFormKey =
-      GlobalKey<FormState>(); // For the personal details in dialog
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _surnameController = TextEditingController();
+  final _studentNumberController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
 
-  Future<void> _showPersonalDetailsDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Enter Personal Details"),
-          content: SizedBox(
-            height: 320,
-            width: 290,
-            child: Form(
-              key: _detailsFormKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Full Name'),
-                    validator:
-                        (val) => val == null || val.isEmpty ? 'Required' : null,
+  bool _isLoading = false;
+  final _mainFormKey = GlobalKey<FormState>();
+  // final _detailsFormKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light, // White status bar icons
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: const Color(0xFF6D7BFF), // Exact blue from screenshot
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF5E6EFF), Color(0xFF3D4EFF)],
+            ),
+          ),
+          child: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Form(
+                  key: _mainFormKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo - Heart with stars (replace with your asset if different)
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: Icon(
+                          Icons.favorite,
+                          size: 60,
+                          color: Color(0xFF6D7BFF),
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+
+                      // Welcome Text
+                      Text(
+                        widget.isLogin ? "Welcome Back" : "Create Account",
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.isLogin
+                            ? "Sign in to continue"
+                            : "Fill in your details to get started",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      if (!widget.isLogin)
+                        InputFormfield(
+                          controller: _nameController,
+                          hintText: "First name",
+                          prefixIcon: Icons.person,
+                        ),
+                      const SizedBox(height: 16),
+                      if (!widget.isLogin)
+                        InputFormfield(
+                          controller: _surnameController,
+                          hintText: "Surname",
+                          prefixIcon: Icons.person_outline,
+                        ),
+                      const SizedBox(height: 16),
+                      if (!widget.isLogin)
+                        InputFormfield(
+                          controller: _studentNumberController,
+                          hintText: "Student Number",
+                          prefixIcon: Icons.key,
+                        ),
+                      const SizedBox(height: 16),
+                      if (!widget.isLogin)
+                        InputFormfield(
+                          controller: _phoneNumberController,
+                          hintText: "Phone number",
+                          prefixIcon: Icons.phone,
+                        ),
+                      const SizedBox(height: 16),
+                      EmailFormField(controller: _emailController),
+                      const SizedBox(height: 16),
+
+                      // Password Field
+                      PasswordFormField(controller: _passwordController),
+                      if (widget.isLogin) ...[
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => _showForgotPasswordDialog(context),
+                            child: const Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 32),
+
+                      // Main Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF6D7BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed:
+                              _isLoading
+                                  ? null
+                                  : () {
+                                    if (!_mainFormKey.currentState!.validate())
+                                      return;
+                                    if (!widget.isLogin) {
+                                      _submit(context);
+                                    } else {
+                                      _submit(context);
+                                    }
+                                  },
+                          child:
+                              _isLoading
+                                  ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF6D7BFF),
+                                      ),
+                                    ),
+                                  )
+                                  : Text(
+                                    widget.isLogin ? "Sign In" : "Next",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      // if (widget.isLogin)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _socialButton(
+                              "G",
+                              Colors.red,
+                              imagepath: 'assets/google.png',
+                              onTap: () async {
+                                final auth = Provider.of<AuthService>(
+                                  context,
+                                  listen: false,
+                                );
+
+                                try {
+                                  final result = await auth.signInWithGoogle();
+                                  final user = result.user;
+
+                                  final doc =
+                                      await FirebaseFirestore.instance
+                                          .collection("users")
+                                          .doc(user!.uid)
+                                          .get();
+
+                                  if (doc.exists) {
+                                    // Profile already created
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      RouteManager.mainPage,
+                                      arguments: user.email,
+                                    );
+                                  } else {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      RouteManager.completeProfilePage,
+                                      arguments: {
+                                        "email": user.email,
+                                        "name": user.displayName ?? "",
+                                        "uid": user.uid,
+                                      },
+                                    );
+                                  }
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 20),
+                            _socialButton(
+                              "F",
+                              Colors.blue,
+                              imagepath: 'assets/facebook.png',
+                              onTap: () async {
+                                final auth = Provider.of<AuthService>(
+                                  context,
+                                  listen: false,
+                                );
+                                try {
+                                  await auth.signInWithFacebook();
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    RouteManager.mainPage,
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+
+                      const SizedBox(height: 40),
+
+                      // Toggle Link
+                      TextButton(
+                        onPressed:
+                            () => Navigator.pushReplacementNamed(
+                              context,
+                              widget.isLogin
+                                  ? RouteManager.registrationPage
+                                  : RouteManager.loginPage,
+                            ),
+                        child: Text(
+                          widget.isLogin
+                              ? "Don't have an account? Sign Up"
+                              : "Already have an account? Sign In",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  TextFormField(
-                    controller: _surnameController,
-                    decoration: const InputDecoration(labelText: 'Surname'),
-                    validator:
-                        (val) => val == null || val.isEmpty ? 'Required' : null,
-                  ),
-                  TextFormField(
-                    controller: _studentNumberController,
-                    decoration: const InputDecoration(
-                      labelText: 'Student Number',
-                    ),
-                    validator:
-                        (val) => val == null || val.isEmpty ? 'Required' : null,
-                  ),
-                  TextFormField(
-                    controller: _phoneNumberController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number',
-                    ),
-                    validator:
-                        (val) => val == null || val.isEmpty ? 'Required' : null,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context), // close dialog
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed:
-                  _isLoading
-                      ? null
-                      : () {
-                        if (_detailsFormKey.currentState!.validate()) {
-                          setState(() => _isLoading = true);
-                          _submit(context);
-                        }
-                      },
-              child:
-                  _isLoading
-                      ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      )
-                      : const Text('Register'),
-            ),
-          ],
-        );
-      },
+        ),
+      ),
     );
   }
 
-  // Method to handle form submission
+  Widget _socialButton(
+    String text,
+    Color color, {
+    required String imagepath,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: const BoxDecoration(shape: BoxShape.circle),
+          child: Center(child: Image.asset(imagepath)),
+        ),
+      ),
+    );
+  }
+
   Future<void> _submit(BuildContext context) async {
     if (!_mainFormKey.currentState!.validate()) return; // Validate the form
 
@@ -140,7 +330,7 @@ class _AuthPageState extends State<AuthPage> {
           RouteManager.mainPage,
           arguments: _emailController.text.trim(),
         );
-      } else {
+      } else {        
         // Registration logic
         await authService.register(
           _emailController.text.trim(),
@@ -215,135 +405,4 @@ class _AuthPageState extends State<AuthPage> {
           ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _mainFormKey,
-          child: ListView(
-            children: [
-              SizedBox(height: 30),
-              if (widget.isLogin)
-                // Show loading indicator if logging in
-                SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: Image.asset('assets/welcome.png'),
-                ),
-              if (!widget.isLogin)
-                SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: Image.asset('assets/passwd.png'),
-                ),
-              SizedBox(height: 10),
-              Card(
-                elevation: 8,
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10),
-                      if (!widget.isLogin)
-                        // Title for registration
-                        const Text(
-                          'Create an Account',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      if (widget.isLogin)
-                        // Title for login
-                        const Text(
-                          'Login to Your Account',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      SizedBox(height: 10),
-                      // Email input field
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: EmailFormField(controller: _emailController),
-                      ),
-                      const SizedBox(height: 5),
-                      // Password input field
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: PasswordFormField(
-                          controller: _passwordController,
-                        ),
-                      ),
-                      if (widget.isLogin)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            child: const Text('Forgot Password'),
-                            onPressed: () {
-                              _showForgotPasswordDialog(context);
-                            },
-                          ),
-                        ),
-                      // Submit button
-                      SizedBox(
-                        width: 420,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          // onPressed: _isLoading ? null : () => _submit(context),
-                          onPressed: () {
-                            if (!_mainFormKey.currentState!.validate()) {
-                              return;
-                            } else if (!widget.isLogin) {
-                              _showPersonalDetailsDialog(context);
-                            } else {
-                              _submit(context);
-                            }
-                          },
-                          child:
-                              _isLoading
-                                  ? const CircularProgressIndicator()
-                                  : Text(widget.isLogin ? 'Login' : 'Register'),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      // Toggle between login and registration
-                      TextButton(
-                        onPressed:
-                            () => Navigator.pushReplacementNamed(
-                              context,
-                              widget.isLogin
-                                  ? RouteManager.registrationPage
-                                  : RouteManager.loginPage,
-                            ),
-                        child: Text(
-                          widget.isLogin
-                              ? 'Create an account'
-                              : 'Already have an account?',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
-
-// This code defines an authentication page that allows users to either log in or register.
-// It uses a form with validation for email and password inputs, and conditionally shows a name input field for registration.
-// The page handles form submission, showing loading indicators and error messages as needed.

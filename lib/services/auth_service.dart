@@ -77,9 +77,51 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  void createUserCollection(
+    String name,
+    surname,
+    email,
+    phoneNumber,
+    studentNumber,
+    uid,
+  ) async {
+    // Create an AppUser object with additional user data
+    AppUser appUser = AppUser(
+      email: email,
+      name: name,
+      createdAt: DateTime.now(),
+      surname: surname,
+      studentNumber: studentNumber,
+      phoneNumber: phoneNumber,
+    );
+
+    // Save the user data to Firestore
+    await _firestore.collection('users').doc(uid).set(appUser.toFirestore());
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //                       const SnackBar(content: Text("Please enter your email")),
+    //                     );
+    // return userCredential.user; // Return the newly created user
+  }
+
   Future<void> resetPassword(String email) async {
     if (email.isEmpty) throw 'Email is required for password reset';
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
+  Map<dynamic, dynamic> setRoute(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    return args;
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    final provider = GoogleAuthProvider();
+    provider.setCustomParameters({'prompt': 'select_account'});
+    return await _auth.signInWithPopup(provider);
+  }
+
+  Future<UserCredential> signInWithFacebook() async {
+    final provider = FacebookAuthProvider();
+    return await _auth.signInWithPopup(provider);
   }
 
   // Method to handle authentication errors

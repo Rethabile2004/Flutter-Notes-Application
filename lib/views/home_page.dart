@@ -51,6 +51,7 @@ class MainPage extends StatelessWidget {
                     Text('Phone: ${user.phoneNumber}'),
                   ],
                 ),
+                
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
