@@ -26,18 +26,46 @@ class _MainPageState extends State<MainPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('New Note', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: SizedBox(
+        backgroundColor:Color(0xFF5E6EFF),
+        content: Container(
           width: 340,
-          height: 280,
-          child: NoteForm(
-            onSubmit: (name, desc) {
-              Provider.of<AuthService>(context, listen: false).addNote(name, desc);
-              Navigator.pop(context);
-              Navigator.pushNamed(context,RouteManager.mainLayout);
-            },
+          height: 450,
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            //  color:     Color(0xFF5E6EFF),//[Color(0xFF5E6EFF), Color(0xFF3D4EFF)],
+            borderRadius: BorderRadius.circular(28),
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.black.withOpacity(0.2),
+            //     blurRadius: 20,
+            //     offset: const Offset(0, 10),
+            //   ),
+            // ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'New Note',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 310,
+                child: NoteForm(
+                  onSubmit: (name, desc) {
+                    Provider.of<AuthService>(context, listen: false)
+                        .addNote(name, desc);
+                    Navigator.pop(context); // Dialog closes → StreamBuilder auto-refreshes
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -48,28 +76,40 @@ class _MainPageState extends State<MainPage> {
   void _showEditNoteDialog(BuildContext context, Note note) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Edit Note', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: SizedBox(
-          width: 340,
-          height: 310,
-          child: NoteForm(
-            noteId: note.id,
-            initialName: note.name,
-            initialDescription: note.description,
-            onSubmit: (name, desc) {
-              Provider.of<AuthService>(context, listen: false).updateNote(note.id, name, desc);
-              Navigator.pop(context);
-              Navigator.pushNamed(context,RouteManager.mainLayout);
-            },
+      builder:
+          (context) => AlertDialog(
+            // backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: const Text(
+              'Edit Note',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: SizedBox(
+              width: 340,
+              height: 310,
+              child: NoteForm(
+                noteId: note.id,
+                initialName: note.name,
+                initialDescription: note.description,
+                onSubmit: (name, desc) {
+                  Provider.of<AuthService>(
+                    context,
+                    listen: false,
+                  ).updateNote(note.id, name, desc);
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, RouteManager.mainLayout);
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        ],
-      ),
     );
   }
 
@@ -77,18 +117,25 @@ class _MainPageState extends State<MainPage> {
   Future<void> _deleteNote(BuildContext context, String id) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: const Text('Delete Note?'),
-        content: const Text('This action cannot be undone.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Color(0xFF5E6EFF),
+            title: const Text('Delete Note?'),
+            content: const Text('This action cannot be undone.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel',style: TextStyle(color: Color.fromARGB(255, 159, 159, 159)),),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
     if (confirm == true) {
       await Provider.of<AuthService>(context, listen: false).deleteNote(id);
@@ -104,14 +151,6 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         extendBody: true,
         backgroundColor: Colors.transparent,
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF6D7BFF),
-          elevation: 10,
-          onPressed: () => _showAddNoteDialog(context),
-          label: const Text('Add Note', style: TextStyle(fontWeight: FontWeight.bold)),
-          icon: const Icon(Icons.add),
-        ),
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -128,10 +167,19 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   // User Header
                   FutureBuilder<AppUser?>(
-                    future: authService.getUserData(authService.currentUser!.uid),
+                    future: authService.getUserData(
+                      authService.currentUser!.uid,
+                    ),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator(color: Colors.white)));
+                        return const SizedBox(
+                          height: 100,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
                       }
                       final user = snapshot.data!;
                       return Row(
@@ -141,7 +189,11 @@ class _MainPageState extends State<MainPage> {
                             backgroundColor: Colors.white,
                             child: Text(
                               "${user.name[0]}${user.surname[0]}".toUpperCase(),
-                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF6D7BFF)),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF6D7BFF),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -151,11 +203,18 @@ class _MainPageState extends State<MainPage> {
                               children: [
                                 Text(
                                   "Welcome back, ${user.name}",
-                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 Text(
                                   user.email,
-                                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white70,
+                                  ),
                                 ),
                               ],
                             ),
@@ -166,11 +225,25 @@ class _MainPageState extends State<MainPage> {
                   ),
 
                   const SizedBox(height: 40),
-
+                  FloatingActionButton.extended(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF6D7BFF),
+                    elevation: 10,
+                    onPressed: () => _showAddNoteDialog(context),
+                    label: const Text(
+                      'Add Note',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    icon: const Icon(Icons.add),
+                  ),
                   // Notes Title
                   const Text(
                     "Your Notes",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -179,17 +252,31 @@ class _MainPageState extends State<MainPage> {
                     child: StreamBuilder<List<Note>>(
                       stream: authService.getNotes(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator(color: Colors.white));
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          );
                         }
-                        if (snapshot.hasError) return const Center(child: Text('Error loading notes', style: TextStyle(color: Colors.white70)));
+                        if (snapshot.hasError)
+                          return Center(
+                            child: Text(
+                              'Error loading notes',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          );
                         final notes = snapshot.data ?? [];
                         if (notes.isEmpty) {
                           return const Center(
                             child: Text(
                               "No notes yet.\nTap + to create one!",
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 18, color: Colors.white70),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white70,
+                              ),
                             ),
                           );
                         }
@@ -204,21 +291,44 @@ class _MainPageState extends State<MainPage> {
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.2),
+                                ),
                               ),
                               child: ListTile(
-                                title: Text(note.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
-                                subtitle: Text(note.description, style: const TextStyle(color: Colors.white70)),
+                                title: Text(
+                                  note.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  note.description,
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.edit, color: Colors.green),
-                                      onPressed: () => _showEditNoteDialog(context, note),
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.green,
+                                      ),
+                                      onPressed:
+                                          () => _showEditNoteDialog(
+                                            context,
+                                            note,
+                                          ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () => _deleteNote(context, note.id),
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed:
+                                          () => _deleteNote(context, note.id),
                                     ),
                                   ],
                                 ),

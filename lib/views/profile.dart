@@ -15,9 +15,9 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFF5E6EFF),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Edit Profile', style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 340,
           child: UserInformationForm(

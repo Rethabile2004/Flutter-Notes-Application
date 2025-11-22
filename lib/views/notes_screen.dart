@@ -1,9 +1,4 @@
-//
-// Coder               : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes  
-//
-
+// views/note_form.dart
 import 'package:flutter/material.dart';
 
 class NoteForm extends StatefulWidget {
@@ -26,14 +21,21 @@ class NoteForm extends StatefulWidget {
 
 class _NoteFormState extends State<NoteForm> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _descriptionController;
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialName != null) _nameController.text = widget.initialName!;
-    if (widget.initialDescription != null) _descriptionController.text = widget.initialDescription!;
+    _nameController = TextEditingController(text: widget.initialName);
+    _descriptionController = TextEditingController(text: widget.initialDescription);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,31 +43,90 @@ class _NoteFormState extends State<NoteForm> {
     return Form(
       key: _formKey,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
+          // Title Field
           TextFormField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Note Title',hintText: 'Software Engineering || Notes'),
-            validator: (value) => value!.isEmpty ? 'Required' : null,
+            style: const TextStyle(color: Colors.white, fontSize: 18),
+            decoration: InputDecoration(
+              hintText: 'e.g. Software Engineering Notes',
+              hintStyle: const TextStyle(color: Colors.white70),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.15),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(color: Colors.white, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            ),
+            validator: (value) => value?.trim().isEmpty == true ? 'Title required' : null,
           ),
+          const SizedBox(height: 20),
+
+          // Description Field
           TextFormField(
             controller: _descriptionController,
-            maxLines: 3,
-            decoration: const InputDecoration(hintText: 'Focus on unit 2 for the main test',border:OutlineInputBorder() ),
-            validator: (value) => value!.isEmpty ? 'Required' : null,
+            maxLines: 5,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+            decoration: InputDecoration(
+              hintText: 'Focus on unit 2 for the main test...',
+              hintStyle: const TextStyle(color: Colors.white70),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.15),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(color: Colors.white, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            ),
+            validator: (value) => value?.trim().isEmpty == true ? 'Description required' : null,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 32),
 
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                widget.onSubmit(
-                  _nameController.text.trim(),
-                  _descriptionController.text.trim(),
-                );
-                Navigator.pop(context);
-              }
-            },
-            child: Text(widget.noteId == null ? 'Add Note' : 'Update Note'),
+          // Submit Button
+          SizedBox(
+            width: double.infinity,
+            // height: 59,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF3D4EFF),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                elevation: 8,
+              ),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  widget.onSubmit(
+                    _nameController.text.trim(),
+                    _descriptionController.text.trim(),
+                  );
+                  // Navigator.pop handled in dialog caller
+                }
+              },
+              child: Text(
+                widget.noteId == null ? 'Add Note' : 'Update Note',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
         ],
       ),
