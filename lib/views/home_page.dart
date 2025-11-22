@@ -4,340 +4,237 @@
 // Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
 //
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_flutter/models/app_user.dart';
 import 'package:firebase_flutter/models/notes.dart';
 import 'package:firebase_flutter/routes/app_router.dart';
 import 'package:firebase_flutter/services/auth_service.dart';
 import 'package:firebase_flutter/views/notes_screen.dart';
-import 'package:firebase_flutter/views/user_infromation_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-/// Redesigned Home Screen showing user info and list of notes.
-/// Allows the user to add, edit, or delete notes with a refreshed UI layout.
-class MainPage extends StatelessWidget {
-  final String email;
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
-  const MainPage({super.key, required this.email});
-  // Show user profile info in a dialog with an option to update it
-  void _userInfoUpdate(BuildContext context) {
-    final authService = Provider.of<AuthService>(context, listen: false);
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
 
+class _MainPageState extends State<MainPage> {
+  // Add Note Dialog
+  void _showAddNoteDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => FutureBuilder<AppUser?>(
-            future: authService.getUserData(authService.currentUser!.uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final user = snapshot.data;
-              if (user == null) {
-                return const Center(child: Text('User not found'));
-              }
-
-              return AlertDialog(
-                icon: const Icon(Icons.person, size: 80),
-                title: const Text('Profile Information'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Name: ${user.name} ${user.surname}'),
-                    Text('Email: ${user.email}'),
-                    Text('Phone: ${user.phoneNumber}'),
-                  ],
-                ),
-                
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _editUserInfo(context, user);
-                    },
-                    child: const Text('Edit Info'),
-                  ),
-                ],
-              );
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('New Note', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: 340,
+          height: 280,
+          child: NoteForm(
+            onSubmit: (name, desc) {
+              Provider.of<AuthService>(context, listen: false).addNote(name, desc);
+              Navigator.pop(context);
+              Navigator.pushNamed(context,RouteManager.mainLayout);
             },
           ),
+        ),
+      ),
     );
   }
 
-  // Show form to edit user info
-  void _editUserInfo(BuildContext context, AppUser user) {
+  // Edit Note Dialog
+  void _showEditNoteDialog(BuildContext context, Note note) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-            ],
-            title: const Text('Edit Information'),
-            content: SizedBox(
-              height: 250,
-              width: 250,
-              child: UserInformationForm(
-                initialName: user.name,
-                initialSurname: user.surname,
-                initialPhoneNumber: user.phoneNumber,
-                userId: FirebaseAuth.instance.currentUser!.uid,
-                onSubmit: (name, surname, phoneNumber) {
-                  Provider.of<AuthService>(
-                    context,
-                    listen: false,
-                  ).updateUserInfo(name, surname, phoneNumber);
-                },
-              ),
-            ),
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Edit Note', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: 340,
+          height: 310,
+          child: NoteForm(
+            noteId: note.id,
+            initialName: note.name,
+            initialDescription: note.description,
+            onSubmit: (name, desc) {
+              Provider.of<AuthService>(context, listen: false).updateNote(note.id, name, desc);
+              Navigator.pop(context);
+              Navigator.pushNamed(context,RouteManager.mainLayout);
+            },
           ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        ],
+      ),
     );
+  }
+
+  // Delete Confirmation
+  Future<void> _deleteNote(BuildContext context, String id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Delete Note?'),
+        content: const Text('This action cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirm == true) {
+      await Provider.of<AuthService>(context, listen: false).deleteNote(id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: Icon(Icons.home, color: Colors.white),
-        title: const Text('Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            tooltip: 'Logout',
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacementNamed(context, RouteManager.loginPage);
-            },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: Colors.transparent,
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Colors.white,
+          foregroundColor: const Color(0xFF6D7BFF),
+          elevation: 10,
+          onPressed: () => _showAddNoteDialog(context),
+          label: const Text('Add Note', style: TextStyle(fontWeight: FontWeight.bold)),
+          icon: const Icon(Icons.add),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF5E6EFF), Color(0xFF3D4EFF)],
+            ),
           ),
-        ],
-      ),
-
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddNoteDialog(context),
-        label: const Text('Add Note'),
-        icon: const Icon(Icons.add),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<AppUser?>(
-          future: authService.getUserData(authService.currentUser!.uid),
-          builder: (context, userSnapshot) {
-            if (userSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (!userSnapshot.hasData) {
-              return const Center(child: Text('User not found'));
-            }
-
-            final user = userSnapshot.data!;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //  User Info Card
-                Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // User Header
+                  FutureBuilder<AppUser?>(
+                    future: authService.getUserData(authService.currentUser!.uid),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator(color: Colors.white)));
+                      }
+                      final user = snapshot.data!;
+                      return Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 32,
+                            backgroundColor: Colors.white,
+                            child: Text(
+                              "${user.name[0]}${user.surname[0]}".toUpperCase(),
+                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF6D7BFF)),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Welcome back, ${user.name}",
+                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                                Text(
+                                  user.email,
+                                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  child: ListTile(
-                    onTap: () => _userInfoUpdate(context),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    leading: const CircleAvatar(
-                      radius: 25,
-                      child: Icon(Icons.person),
-                    ),
-                    trailing: Icon(Icons.edit, color: Colors.blue[900]),
-                    title: Text(
-                      user.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    subtitle: Text(email),
+
+                  const SizedBox(height: 40),
+
+                  // Notes Title
+                  const Text(
+                    "Your Notes",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                ),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 24),
+                  // Notes List
+                  Expanded(
+                    child: StreamBuilder<List<Note>>(
+                      stream: authService.getNotes(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator(color: Colors.white));
+                        }
+                        if (snapshot.hasError) return const Center(child: Text('Error loading notes', style: TextStyle(color: Colors.white70)));
+                        final notes = snapshot.data ?? [];
+                        if (notes.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              "No notes yet.\nTap + to create one!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 18, color: Colors.white70),
+                            ),
+                          );
+                        }
 
-                // 🧾 Notes Title
-                const Text(
-                  'Your Notes',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 10),
-
-                // 📋 Notes List
-                Expanded(child: _buildNotesList(context)),
-              ],
-            );
-          },
+                        return ListView.builder(
+                          itemCount: notes.length,
+                          itemBuilder: (context, i) {
+                            final note = notes[i];
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                              ),
+                              child: ListTile(
+                                title: Text(note.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
+                                subtitle: Text(note.description, style: const TextStyle(color: Colors.white70)),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Colors.green),
+                                      onPressed: () => _showEditNoteDialog(context, note),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () => _deleteNote(context, note.id),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
-  }
-
-  /// Displays the note list as styled cards with edit and delete actions.
-  Widget _buildNotesList(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-
-    return StreamBuilder<List<Note>>(
-      stream: authService.getNotes(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final notes = snapshot.data ?? [];
-
-        if (notes.isEmpty) {
-          return const Center(child: Text('No notes added yet'));
-        }
-
-        return ListView.builder(
-          itemCount: notes.length,
-          itemBuilder: (context, index) {
-            final note = notes[index];
-
-            return Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                title: Text(
-                  note.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                subtitle: Text(
-                  'description: ${note.description}',
-                  style: const TextStyle(fontSize: 14),
-                ),
-                trailing: Wrap(
-                  spacing: 8,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.green),
-                      onPressed: () => _showEditNoteDialog(context, note),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteNote(context, note.id),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /// Opens a dialog to add a new note
-  void _showAddNoteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Add New Note'),
-            content: SizedBox(
-              height: 280,
-              child: NoteForm(
-                onSubmit: (name, description) {
-                  Provider.of<AuthService>(
-                    context,
-                    listen: false,
-                  ).addNote(name, description);
-                },
-              ),
-            ),
-          ),
-    );
-  }
-
-  /// Opens a dialog to edit an existing note
-  void _showEditNoteDialog(BuildContext context, Note note) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Edit Note'),
-            content: SizedBox(
-              height: 310,
-              child: NoteForm(
-                noteId: note.id,
-                initialName: note.name,
-                initialDescription: note.description,
-                onSubmit: (name, description) {
-                  Provider.of<AuthService>(
-                    context,
-                    listen: false,
-                  ).updateNote(note.id, name, description);
-                },
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  /// Opens a confirmation dialog before deleting a note
-  Future<void> _deleteNote(BuildContext context, String noteId) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Confirm Delete'),
-            content: const Text('Are you sure you want to delete this note?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-    );
-
-    if (confirmed == true) {
-      await Provider.of<AuthService>(context, listen: false).deleteNote(noteId);
-    }
   }
 }

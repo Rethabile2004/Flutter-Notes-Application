@@ -77,7 +77,7 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  void createUserCollection(
+  Future<AppUser?> createUserCollection(
     String name,
     surname,
     email,
@@ -97,6 +97,7 @@ class AuthService extends ChangeNotifier {
 
     // Save the user data to Firestore
     await _firestore.collection('users').doc(uid).set(appUser.toFirestore());
+    return appUser; // Return the newly created user
     // ScaffoldMessenger.of(context).showSnackBar(
     //                       const SnackBar(content: Text("Please enter your email")),
     //                     );

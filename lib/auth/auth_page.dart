@@ -44,174 +44,189 @@ class _AuthPageState extends State<AuthPage> {
             ),
           ),
           child: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Form(
-                  key: _mainFormKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo - Heart with stars (replace with your asset if different)
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Form(
+                    key: _mainFormKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Logo - Heart with stars (replace with your asset if different)
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: Icon(
+                            Icons.favorite,
+                            size: 60,
+                            color: Color(0xFF6D7BFF),
+                          ),
                         ),
-                        child: Icon(
-                          Icons.favorite,
-                          size: 60,
-                          color: Color(0xFF6D7BFF),
+                        const SizedBox(height: 48),
+              
+                        // Welcome Text
+                        Text(
+                          widget.isLogin ? "Welcome Back" : "Create Account",
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 48),
-
-                      // Welcome Text
-                      Text(
-                        widget.isLogin ? "Welcome Back" : "Create Account",
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.isLogin
-                            ? "Sign in to continue"
-                            : "Fill in your details to get started",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-                      if (!widget.isLogin)
-                        InputFormfield(
-                          controller: _nameController,
-                          hintText: "First name",
-                          prefixIcon: Icons.person,
-                        ),
-                      const SizedBox(height: 16),
-                      if (!widget.isLogin)
-                        InputFormfield(
-                          controller: _surnameController,
-                          hintText: "Surname",
-                          prefixIcon: Icons.person_outline,
-                        ),
-                      const SizedBox(height: 16),
-                      if (!widget.isLogin)
-                        InputFormfield(
-                          controller: _studentNumberController,
-                          hintText: "Student Number",
-                          prefixIcon: Icons.key,
-                        ),
-                      const SizedBox(height: 16),
-                      if (!widget.isLogin)
-                        InputFormfield(
-                          controller: _phoneNumberController,
-                          hintText: "Phone number",
-                          prefixIcon: Icons.phone,
-                        ),
-                      const SizedBox(height: 16),
-                      EmailFormField(controller: _emailController),
-                      const SizedBox(height: 16),
-
-                      // Password Field
-                      PasswordFormField(controller: _passwordController),
-                      if (widget.isLogin) ...[
                         const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () => _showForgotPasswordDialog(context),
-                            child: const Text(
-                              "Forgot Password?",
-                              style: TextStyle(color: Colors.white70),
-                            ),
+                        Text(
+                          widget.isLogin
+                              ? "Sign in to continue"
+                              : "Fill in your details to get started",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white70,
                           ),
                         ),
-                      ],
-                      const SizedBox(height: 32),
-
-                      // Main Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF6D7BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28),
-                            ),
-                            elevation: 0,
+                        const SizedBox(height: 48),
+                        if (!widget.isLogin)
+                          InputFormfield(
+                            controller: _nameController,
+                            hintText: "First name",
+                            prefixIcon: Icons.person,
                           ),
-                          onPressed:
-                              _isLoading
-                                  ? null
-                                  : () {
-                                    if (!_mainFormKey.currentState!.validate())
-                                      return;
-                                    if (!widget.isLogin) {
-                                      _submit(context);
-                                    } else {
-                                      _submit(context);
-                                    }
-                                  },
-                          child:
-                              _isLoading
-                                  ? const SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Color(0xFF6D7BFF),
+                        const SizedBox(height: 16),
+                        if (!widget.isLogin)
+                          InputFormfield(
+                            controller: _surnameController,
+                            hintText: "Surname",
+                            prefixIcon: Icons.person_outline,
+                          ),
+                        const SizedBox(height: 16),
+                        if (!widget.isLogin)
+                          InputFormfield(
+                            controller: _studentNumberController,
+                            hintText: "Student Number",
+                            prefixIcon: Icons.key,
+                          ),
+                        const SizedBox(height: 16),
+                        if (!widget.isLogin)
+                          InputFormfield(
+                            controller: _phoneNumberController,
+                            hintText: "Phone number",
+                            prefixIcon: Icons.phone,
+                          ),
+                        const SizedBox(height: 16),
+                        EmailFormField(controller: _emailController),
+                        const SizedBox(height: 16),
+              
+                        // Password Field
+                        PasswordFormField(controller: _passwordController),
+                        if (widget.isLogin) ...[
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => _showForgotPasswordDialog(context),
+                              child: const Text(
+                                "Forgot Password?",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 32),
+              
+                        // Main Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF6D7BFF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(28),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed:
+                                _isLoading
+                                    ? null
+                                    : () {
+                                      if (!_mainFormKey.currentState!.validate())
+                                        return;
+                                      if (!widget.isLogin) {
+                                        _submit(context);
+                                      } else {
+                                        _submit(context);
+                                      }
+                                    },
+                            child:
+                                _isLoading
+                                    ? const SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF6D7BFF),
+                                        ),
+                                      ),
+                                    )
+                                    : Text(
+                                      widget.isLogin ? "Sign In" : "Next",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  )
-                                  : Text(
-                                    widget.isLogin ? "Sign In" : "Next",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      // if (widget.isLogin)
+                        // if (widget.isLogin)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          child: Row(
+                            children: [
+                              Expanded(child: Divider(color: Colors.white38)),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "or continue with",
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              ),
+                              Expanded(child: Divider(color: Colors.white38)),
+                            ],
+                          ),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _socialButton(
-                              "G",
-                              Colors.red,
-                              imagepath: 'assets/google.png',
+                              asset: 'assets/google.png',
                               onTap: () async {
                                 final auth = Provider.of<AuthService>(
                                   context,
                                   listen: false,
                                 );
-
+              
                                 try {
                                   final result = await auth.signInWithGoogle();
                                   final user = result.user;
-
+              
                                   final doc =
                                       await FirebaseFirestore.instance
                                           .collection("users")
                                           .doc(user!.uid)
                                           .get();
-
+              
                                   if (doc.exists) {
                                     // Profile already created
                                     Navigator.pushReplacementNamed(
                                       context,
-                                      RouteManager.mainPage,
+                                      RouteManager.mainLayout,
                                       arguments: user.email,
                                     );
                                   } else {
@@ -234,9 +249,7 @@ class _AuthPageState extends State<AuthPage> {
                             ),
                             const SizedBox(width: 20),
                             _socialButton(
-                              "F",
-                              Colors.blue,
-                              imagepath: 'assets/facebook.png',
+                              asset: 'assets/facebook.png',
                               onTap: () async {
                                 final auth = Provider.of<AuthService>(
                                   context,
@@ -246,7 +259,7 @@ class _AuthPageState extends State<AuthPage> {
                                   await auth.signInWithFacebook();
                                   Navigator.pushReplacementNamed(
                                     context,
-                                    RouteManager.mainPage,
+                                    RouteManager.mainLayout,
                                   );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -257,30 +270,31 @@ class _AuthPageState extends State<AuthPage> {
                             ),
                           ],
                         ),
-
-                      const SizedBox(height: 40),
-
-                      // Toggle Link
-                      TextButton(
-                        onPressed:
-                            () => Navigator.pushReplacementNamed(
-                              context,
-                              widget.isLogin
-                                  ? RouteManager.registrationPage
-                                  : RouteManager.loginPage,
+              
+                        const SizedBox(height: 40),
+              
+                        // Toggle Link
+                        TextButton(
+                          onPressed:
+                              () => Navigator.pushReplacementNamed(
+                                context,
+                                widget.isLogin
+                                    ? RouteManager.registrationPage
+                                    : RouteManager.loginPage,
+                              ),
+                          child: Text(
+                            widget.isLogin
+                                ? "Don't have an account? Sign Up"
+                                : "Already have an account? Sign In",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
                             ),
-                        child: Text(
-                          widget.isLogin
-                              ? "Don't have an account? Sign Up"
-                              : "Already have an account? Sign In",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -291,21 +305,20 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _socialButton(
-    String text,
-    Color color, {
-    required String imagepath,
-    required VoidCallback onTap,
-  }) {
+  // Replace your shitty _socialButton with this:
+  Widget _socialButton({required String asset, required VoidCallback onTap}) {
     return InkWell(
+      borderRadius: BorderRadius.circular(30),
       onTap: onTap,
-      child: Card(
-        child: Container(
-          width: 60,
-          height: 60,
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: Center(child: Image.asset(imagepath)),
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.2),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withOpacity(0.3)),
         ),
+        child: Center(child: Image.asset(asset, width: 32, height: 32)),
       ),
     );
   }
@@ -327,10 +340,10 @@ class _AuthPageState extends State<AuthPage> {
         // Navigate to the main page after successful login
         Navigator.pushReplacementNamed(
           context,
-          RouteManager.mainPage,
+          RouteManager.mainLayout,
           arguments: _emailController.text.trim(),
         );
-      } else {        
+      } else {
         // Registration logic
         await authService.register(
           _emailController.text.trim(),
