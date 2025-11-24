@@ -1,6 +1,5 @@
 //
 // Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
 // Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
 //
 
@@ -29,7 +28,6 @@ class Note {
       name: data['name'],
       description: data['description'],
       studentId: data['studentId'],
-      // : (data['createdAt'] as Timestamp).toDate(),
       createdAt: (data['createdAt'] as Timestamp).toDate(),
     );
   }

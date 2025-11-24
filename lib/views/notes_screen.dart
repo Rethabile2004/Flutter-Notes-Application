@@ -1,4 +1,8 @@
-// views/note_form.dart
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:flutter/material.dart';
 
 class NoteForm extends StatefulWidget {
@@ -53,6 +57,7 @@ class _NoteFormState extends State<NoteForm> {
               hintText: 'e.g. Software Engineering Notes',
               hintStyle: const TextStyle(color: Colors.white70),
               filled: true,
+              // ignore: deprecated_member_use
               fillColor: Colors.white.withOpacity(0.15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -81,6 +86,7 @@ class _NoteFormState extends State<NoteForm> {
               hintText: 'Focus on unit 2 for the main test...',
               hintStyle: const TextStyle(color: Colors.white70),
               filled: true,
+              // ignore: deprecated_member_use
               fillColor: Colors.white.withOpacity(0.15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -115,7 +121,10 @@ class _NoteFormState extends State<NoteForm> {
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
+                  // print(_nameController.text.trim());
+                  // print(_descriptionController.text.trim());
                   widget.onSubmit(
+                    // widget.noteId,
                     _nameController.text.trim(),
                     _descriptionController.text.trim(),
                   );

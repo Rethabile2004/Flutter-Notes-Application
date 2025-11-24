@@ -1,3 +1,8 @@
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:firebase_flutter/auth/auth_page.dart';
 import 'package:firebase_flutter/auth/complete_profile_page.dart';
 import 'package:firebase_flutter/views/home_page.dart';

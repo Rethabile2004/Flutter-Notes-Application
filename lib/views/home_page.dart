@@ -1,7 +1,6 @@
 //
 // Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
 //
 
 import 'package:firebase_flutter/models/app_user.dart';
@@ -25,55 +24,61 @@ class _MainPageState extends State<MainPage> {
   void _showAddNoteDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor:Color(0xFF5E6EFF),
-        content: Container(
-          width: 340,
-          height: 450,
-          padding: EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            //  color:     Color(0xFF5E6EFF),//[Color(0xFF5E6EFF), Color(0xFF3D4EFF)],
-            borderRadius: BorderRadius.circular(28),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: Colors.black.withOpacity(0.2),
-            //     blurRadius: 20,
-            //     offset: const Offset(0, 10),
-            //   ),
-            // ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'New Note',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Color(0xFF5E6EFF),
+            content: Container(
+              width: 340,
+              height: 450,
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                //  color:     Color(0xFF5E6EFF),//[Color(0xFF5E6EFF), Color(0xFF3D4EFF)],
+                borderRadius: BorderRadius.circular(28),
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.black.withOpacity(0.2),
+                //     blurRadius: 20,
+                //     offset: const Offset(0, 10),
+                //   ),
+                // ],
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 310,
-                child: NoteForm(
-                  onSubmit: (name, desc) {
-                    Provider.of<AuthService>(context, listen: false)
-                        .addNote(name, desc);
-                    Navigator.pop(context); // Dialog closes → StreamBuilder auto-refreshes
-                  },
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'New Note',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: 310,
+                    child: NoteForm(
+                      onSubmit: (name, desc) {
+                        Provider.of<AuthService>(
+                          context,
+                          listen: false,
+                        ).addNote(name, desc);
+                        Navigator.pop(
+                          context,
+                        ); // Dialog closes → StreamBuilder auto-refreshes
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
   // Edit Note Dialog
   void _showEditNoteDialog(BuildContext context, Note note) {
+    // print('show edit...');
     showDialog(
       context: context,
       builder:
@@ -125,7 +130,10 @@ class _MainPageState extends State<MainPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel',style: TextStyle(color: Color.fromARGB(255, 159, 159, 159)),),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Color.fromARGB(255, 159, 159, 159)),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
@@ -138,6 +146,7 @@ class _MainPageState extends State<MainPage> {
           ),
     );
     if (confirm == true) {
+      // ignore: use_build_context_synchronously
       await Provider.of<AuthService>(context, listen: false).deleteNote(id);
     }
   }
@@ -260,13 +269,14 @@ class _MainPageState extends State<MainPage> {
                             ),
                           );
                         }
-                        if (snapshot.hasError)
+                        if (snapshot.hasError) {
                           return Center(
                             child: Text(
                               'Error loading notes',
                               style: TextStyle(color: Colors.white70),
                             ),
                           );
+                        }
                         final notes = snapshot.data ?? [];
                         if (notes.isEmpty) {
                           return const Center(
@@ -289,9 +299,11 @@ class _MainPageState extends State<MainPage> {
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
+                                // ignore: deprecated_member_use
                                 color: Colors.white.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
+                                  // ignore: deprecated_member_use
                                   color: Colors.white.withOpacity(0.2),
                                 ),
                               ),

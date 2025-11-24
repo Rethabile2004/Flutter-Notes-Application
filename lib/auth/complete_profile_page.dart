@@ -1,3 +1,8 @@
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:firebase_flutter/routes/app_router.dart';
 import 'package:firebase_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +56,6 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Logo (same as login)
                       Container(
                         width: 100,
                         height: 100,
@@ -146,6 +150,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
 
                                   if (!mounted) return;
                                   Navigator.pushReplacementNamed(
+                                    // ignore: use_build_context_synchronously
                                     context,
                                     RouteManager.mainLayout,
                                     arguments: widget.email,
@@ -195,6 +200,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         hintStyle: const TextStyle(color: Colors.white70),
         prefixIcon: Icon(icon, color: Colors.white70),
         filled: true,
+        // ignore: deprecated_member_use
         fillColor: Colors.white.withOpacity(0.15),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),

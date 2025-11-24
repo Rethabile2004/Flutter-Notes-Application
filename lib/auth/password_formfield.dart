@@ -1,4 +1,8 @@
-// password_formfield.dart
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:flutter/material.dart';
 
 class PasswordFormField extends StatefulWidget {
@@ -38,6 +42,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
           onPressed: () => setState(() => _obscureText = !_obscureText),
         ),
         filled: true,
+        // ignore: deprecated_member_use
         fillColor: Colors.white.withOpacity(0.15),
         border: OutlineInputBorder(
           borderSide: BorderSide.none,

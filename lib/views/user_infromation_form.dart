@@ -1,4 +1,8 @@
-// views/user_information_form.dart
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:flutter/material.dart';
 
 class UserInformationForm extends StatefulWidget {

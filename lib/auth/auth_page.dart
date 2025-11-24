@@ -1,3 +1,8 @@
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_flutter/auth/input_formfield.dart';
 import 'package:firebase_flutter/routes/app_router.dart';
@@ -31,10 +36,10 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light, // White status bar icons
+      value: SystemUiOverlayStyle.light,
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: const Color(0xFF6D7BFF), // Exact blue from screenshot
+        backgroundColor: const Color(0xFF6D7BFF),
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -54,7 +59,6 @@ class _AuthPageState extends State<AuthPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Logo - Heart with stars (replace with your asset if different)
                         Container(
                           width: 100,
                           height: 100,
@@ -69,8 +73,6 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         const SizedBox(height: 48),
-              
-                        // Welcome Text
                         Text(
                           widget.isLogin ? "Welcome Back" : "Create Account",
                           style: const TextStyle(
@@ -120,15 +122,14 @@ class _AuthPageState extends State<AuthPage> {
                         const SizedBox(height: 16),
                         EmailFormField(controller: _emailController),
                         const SizedBox(height: 16),
-              
-                        // Password Field
                         PasswordFormField(controller: _passwordController),
                         if (widget.isLogin) ...[
                           const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
-                              onPressed: () => _showForgotPasswordDialog(context),
+                              onPressed:
+                                  () => _showForgotPasswordDialog(context),
                               child: const Text(
                                 "Forgot Password?",
                                 style: TextStyle(color: Colors.white70),
@@ -137,8 +138,6 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ],
                         const SizedBox(height: 32),
-              
-                        // Main Button
                         SizedBox(
                           width: double.infinity,
                           height: 56,
@@ -155,8 +154,10 @@ class _AuthPageState extends State<AuthPage> {
                                 _isLoading
                                     ? null
                                     : () {
-                                      if (!_mainFormKey.currentState!.validate())
+                                      if (!_mainFormKey.currentState!
+                                          .validate()) {
                                         return;
+                                      }
                                       if (!widget.isLogin) {
                                         _submit(context);
                                       } else {
@@ -170,9 +171,10 @@ class _AuthPageState extends State<AuthPage> {
                                       width: 24,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2.5,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          Color(0xFF6D7BFF),
-                                        ),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Color(0xFF6D7BFF),
+                                            ),
                                       ),
                                     )
                                     : Text(
@@ -184,7 +186,6 @@ class _AuthPageState extends State<AuthPage> {
                                     ),
                           ),
                         ),
-                        // if (widget.isLogin)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 32),
                           child: Row(
@@ -211,26 +212,28 @@ class _AuthPageState extends State<AuthPage> {
                                   context,
                                   listen: false,
                                 );
-              
+
                                 try {
                                   final result = await auth.signInWithGoogle();
                                   final user = result.user;
-              
+
                                   final doc =
                                       await FirebaseFirestore.instance
                                           .collection("users")
                                           .doc(user!.uid)
                                           .get();
-              
+
                                   if (doc.exists) {
                                     // Profile already created
                                     Navigator.pushReplacementNamed(
+                                      // ignore: use_build_context_synchronously
                                       context,
                                       RouteManager.mainLayout,
                                       arguments: user.email,
                                     );
                                   } else {
                                     Navigator.pushReplacementNamed(
+                                      // ignore: use_build_context_synchronously
                                       context,
                                       RouteManager.completeProfilePage,
                                       arguments: {
@@ -241,6 +244,7 @@ class _AuthPageState extends State<AuthPage> {
                                     );
                                   }
                                 } catch (e) {
+                                  // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text(e.toString())),
                                   );
@@ -258,10 +262,12 @@ class _AuthPageState extends State<AuthPage> {
                                 try {
                                   await auth.signInWithFacebook();
                                   Navigator.pushReplacementNamed(
+                                    // ignore: use_build_context_synchronously
                                     context,
                                     RouteManager.mainLayout,
                                   );
                                 } catch (e) {
+                                  // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text(e.toString())),
                                   );
@@ -270,9 +276,9 @@ class _AuthPageState extends State<AuthPage> {
                             ),
                           ],
                         ),
-              
+
                         const SizedBox(height: 40),
-              
+
                         // Toggle Link
                         TextButton(
                           onPressed:
@@ -305,7 +311,6 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  // Replace your shitty _socialButton with this:
   Widget _socialButton({required String asset, required VoidCallback onTap}) {
     return InkWell(
       borderRadius: BorderRadius.circular(30),
@@ -314,8 +319,10 @@ class _AuthPageState extends State<AuthPage> {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: Colors.white.withOpacity(0.2),
           shape: BoxShape.circle,
+          // ignore: deprecated_member_use
           border: Border.all(color: Colors.white.withOpacity(0.3)),
         ),
         child: Center(child: Image.asset(asset, width: 32, height: 32)),
@@ -324,27 +331,24 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Future<void> _submit(BuildContext context) async {
-    if (!_mainFormKey.currentState!.validate()) return; // Validate the form
+    if (!_mainFormKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true); // Set loading state
+    setState(() => _isLoading = true);
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
 
       if (widget.isLogin) {
-        // Login logic
         await authService.login(
           _emailController.text.trim(),
           _passwordController.text.trim(),
         );
-        // Navigate to the main page after successful login
         Navigator.pushReplacementNamed(
           context,
           RouteManager.mainLayout,
           arguments: _emailController.text.trim(),
         );
       } else {
-        // Registration logic
         await authService.register(
           _emailController.text.trim(),
           _passwordController.text.trim(),
@@ -354,15 +358,16 @@ class _AuthPageState extends State<AuthPage> {
           _phoneNumberController.text.trim(),
         );
         // Navigate back to the login page after successful registration
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, RouteManager.loginPage);
       }
     } catch (e) {
-      // Show error message
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-      setState(() => _isLoading = false); // Reset loading state
+      setState(() => _isLoading = false);
     }
   }
 
@@ -400,7 +405,9 @@ class _AuthPageState extends State<AuthPage> {
                       listen: false,
                     );
                     await authService.resetPassword(email);
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
+                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Password reset link sent to your email"),
@@ -408,6 +415,7 @@ class _AuthPageState extends State<AuthPage> {
                     );
                   } catch (e) {
                     ScaffoldMessenger.of(
+                      // ignore: use_build_context_synchronously
                       context,
                     ).showSnackBar(SnackBar(content: Text("Error: $e")));
                   }

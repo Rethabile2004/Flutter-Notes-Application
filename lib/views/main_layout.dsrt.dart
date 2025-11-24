@@ -1,7 +1,6 @@
 //
 // Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
 //
 
 import 'package:firebase_flutter/views/home_page.dart';
@@ -41,8 +40,10 @@ class _MainLayoutState extends State<MainLayout> {
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(20),
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: Colors.white.withOpacity(0.15),
           borderRadius: BorderRadius.circular(30),
+          // ignore: deprecated_member_use
           border: Border.all(color: Colors.white.withOpacity(0.2)),
         ),
         child: ClipRRect(

@@ -1,4 +1,8 @@
-// views/profile_screen.dart
+//
+// Coder                    : Rethabile Eric Siase
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
+//
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_flutter/models/app_user.dart';
 import 'package:firebase_flutter/routes/app_router.dart';
@@ -28,6 +32,7 @@ class ProfileScreen extends StatelessWidget {
             onSubmit: (name, surname, phone) async {
               await Provider.of<AuthService>(context, listen: false)
                   .updateUserInfo(name, surname, phone);
+              // ignore: use_build_context_synchronously
               Navigator.pop(context);
             },
           ),
@@ -177,8 +182,10 @@ class _InfoCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       width: double.infinity,
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: Colors.white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(20),
+        // ignore: deprecated_member_use
         border: Border.all(color: Colors.white.withOpacity(0.3)),
       ),
       child: Column(

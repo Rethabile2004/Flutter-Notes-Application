@@ -1,19 +1,17 @@
 //
 // Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules  
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
 //
 
-// This class represents a user in the application.
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUser {
-  final String email; // User's email address
-  final String name; // User's name
-  final String surname; // User's surname
-  final String studentNumber; // User's student number
-  final String phoneNumber; // User's phone number
-  final DateTime createdAt; // Timestamp of when the user was created
+  final String email;
+  final String name;
+  final String surname;
+  final String studentNumber;
+  final String phoneNumber;
+  final DateTime createdAt;
 
   // Constructor to initialize the AppUser object
   AppUser({

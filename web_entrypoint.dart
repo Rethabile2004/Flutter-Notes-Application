@@ -1,7 +1,6 @@
 //
 // Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
 //
 
 import 'package:firebase_flutter/routes/app_router.dart';
@@ -16,14 +15,15 @@ void main() async {
 
   if (kIsWeb) {
     await Firebase.initializeApp(
+      //Add your own keys from firebase for testing, I added instructions on how to get them in the readme file
       options: FirebaseOptions(
-        apiKey: "AIzaSyCzATXl3G-c2pa_Cyx2goqBJsmOcmJhXwk",
-        authDomain: "student-management-538ec.firebaseapp.com",
-        projectId: "student-management-538ec",
-        storageBucket: "student-management-538ec.firebasestorage.app",
-        messagingSenderId: "68729629683",
-        appId: "1:68729629683:web:410a8319ba078d36b9c086",
-        measurementId: "G-1EYTB90XFL",
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: "",
+        measurementId: "",
       ),
     );
   } else {

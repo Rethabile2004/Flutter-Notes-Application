@@ -1,7 +1,6 @@
 //
 // Coder                    : Rethabile Eric Siase
-// Time taken to complete   : 2 days
-// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) notes
+// Purpose                  : Integrated fiebase storage for managing(adding, removing and updating) modules
 //
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -166,17 +165,17 @@ class AuthService extends ChangeNotifier {
   }
 
   // Update a user infromation
-  Future<void> updateNote(
-    String name,
-    String surname,
-    String phoneNumber,
-  ) async {
-    await _notesCollection.doc(currentUser!.uid).update({
-      'name': name,
-      'surname': surname,
-      'phoneNumber': phoneNumber,
-    });
-    notifyListeners();
+  Future<void> updateNote(String id,String name, String surname) async {
+    try {
+      await _notesCollection.doc(id).update({
+        'name': name,
+        'surname': surname,
+        // 'phoneNumber': phoneNumber,
+      });
+      notifyListeners();
+    } catch (error) {
+      throw Exception(error);
+    }
   }
 
   // Method to update user profile information
