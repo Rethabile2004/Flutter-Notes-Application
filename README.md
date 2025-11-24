@@ -4,10 +4,18 @@
 A beautiful, fast, and secure notes application built with **Flutter** and **Firebase**.  
 Supports Android, iOS, and Web from a single codebase. Users can sign up, log in, and manage their personal notes with real-time sync — all data is private and tied to their account.
 
-https://github.com/user-attachments/assets/fee1f948-d09b-4756-ae5e-ffba109d092a
-https://github.com/user-attachments/assets/118b758d-4f25-44a4-98ad-c9cb8716ffbc
-https://github.com/user-attachments/assets/0ad2cbdc-d89f-49ef-8bad-7471132c1bdf
-https://github.com/user-attachments/assets/aef48eec-5557-4692-8bbe-17c4f2ce6df0
+## Project Screenshots
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fee1f948-d09b-4756-ae5e-ffba109d092a" width="45%" />
+  <img src="https://github.com/user-attachments/assets/118b758d-4f25-44a4-98ad-c9cb8716ffbc" width="45%" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0ad2cbdc-d89f-49ef-8bad-7471132c1bdf" width="45%" />
+  <img src="https://github.com/user-attachments/assets/aef48eec-5557-4692-8bbe-17c4f2ce6df0" width="45%" />
+</p>
+
 
 ## Features
 
